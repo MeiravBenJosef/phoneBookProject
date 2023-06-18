@@ -72,9 +72,9 @@ func CreateContact(c *fiber.Ctx) error {
     return c.Status(http.StatusCreated).JSON(responses.ContactResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
 }
 
-//GetAContact searches for a contact by it's full name 
+//SearchAContact searches for a contact by it's full name 
 //maybe add here specific not found error
-func GetAContact(c *fiber.Ctx) error {
+func SearchAContact(c *fiber.Ctx) error {
     ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
     var contact models.Contact
 	defer cancel()
@@ -162,12 +162,12 @@ func DeleteAContact(c *fiber.Ctx) error {
     defer cancel()
 	
 	 //validate the request body
-	 logger.Println("Validating the request body properties for delete contact")
-	 requestValidationRes:=utills.ValidateRequestBody(&contact, c)
-	 if requestValidationRes != "Success"{
+	logger.Println("Validating the request body properties for delete contact")
+	requestValidationRes:=utills.ValidateRequestBody(&contact, c)
+	if requestValidationRes != "Success"{
 		//validation failed
 		 return c.Status(http.StatusBadRequest).JSON(responses.ContactResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": requestValidationRes}})
-	 }
+	}
 
 	 //build full name
 	fullName := utills.BuildFullName(contact.FirstName, contact.LastName)
@@ -227,10 +227,49 @@ func GetContacts(c *fiber.Ctx) error {
         }
   
 		contacts = append(contacts, singleUser)
-	 }
+	}
   
-	 logger.Println("Successfully returned contacts!")
-	 return c.Status(http.StatusOK).JSON(
+	logger.Println("Successfully returned contacts!")
+	return c.Status(http.StatusOK).JSON(
         responses.ContactResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": contacts}},
     )
+}
+
+//Bonus
+//GetContactsByTerm will return all contacts with the given term/ phrase.
+//A term is a sequence of characters that excludes whitespace characters
+//A phrase is a sequence of terms with any number of whitespace characters.
+func GetContactsByTermOrPhrase(c *fiber.Ctx) error{
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var searchterm models.SearchTerm
+	defer cancel()
+
+	//validate the request body
+	logger.Println("Validating the request body properties for delete contact")
+	requestValidationRes:=utills.ValidateRequestBody(&searchterm, c)
+	if requestValidationRes != "Success"{
+		//validation failed
+		return c.Status(http.StatusBadRequest).JSON(responses.ContactResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": requestValidationRes}})
+	}
+
+	//create the search filter of term/ phrase
+	filter := bson.D{{"$text", bson.D{{"$search", searchterm.SearchTerm}}}}
+
+	cursor, err := contactCollection.Find(ctx, filter)
+	if err != nil {
+		errorLogger.Println("Error when executing get contacts by term/phrase request to the database contacs collection")
+        return c.Status(http.StatusInternalServerError).JSON(responses.ContactResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+ 	}
+
+	//reading from the database
+    var results []models.Contact
+	if err = cursor.All(ctx, &results); err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(responses.ContactResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+	}
+  
+	logger.Println("Successfully returned contacts by term/ phrase!")
+	return c.Status(http.StatusOK).JSON(
+        responses.ContactResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": results}},
+    )
+
 }

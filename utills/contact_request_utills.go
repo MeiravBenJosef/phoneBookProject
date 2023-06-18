@@ -37,7 +37,7 @@ func msgForTag(tag string) string {
 
 //ValidateRequestBody will parse the request body to a contact struct, and will validate according to struct tags
 //In case of error in the struct validations  based on tags, the function will return all errors struct's validation test
-func ValidateRequestBody(contact *models.Contact, c *fiber.Ctx) string{
+func ValidateRequestBody(contact interface{}, c *fiber.Ctx) string{
 	if err := c.BodyParser(contact); err != nil {
 		errorLogger.Println("Failed to parge request context into contact")
         return err.Error()

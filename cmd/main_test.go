@@ -26,6 +26,7 @@ type Test struct {
 	expectedCode  int
 	expectedBody  responses.ContactResponse
 	checkBody bool
+	param string
 }
 
 //names of the test contacts 
@@ -196,7 +197,7 @@ func helperRequestRunnerWithoutBody(endpoint string, requesttype string, tests [
 
 		req, _ := http.NewRequest(
 			requesttype,
-			endpoint,
+			endpoint + test.param,
 			nil,
 		)
 		req.Header.Set("Content-Type", "application/json")
@@ -297,7 +298,7 @@ func TestSearchContact(t *testing.T) {
 	}
 
 
-	helperRunner("/getContact", "GET", searchContactTests, searchContactTestInputs, t)
+	helperRunner("/searchContact", "GET", searchContactTests, searchContactTestInputs, t)
 
 	
 }
@@ -390,9 +391,17 @@ func TestGetContacts(t *testing.T) {
 			description: "Get contacts- 200",
 			expectedCode: 200,
 			checkBody: false,
+			param: "1",
+		},
+		{
+			description: "Get contacts- 200",
+			expectedCode: 500,
+			checkBody: false,
+			param: "something",
+
 		},
 	}
 
-	helperRequestRunnerWithoutBody("/contacts/1", "GET", getContactTests, t)
+	helperRequestRunnerWithoutBody("/contacts/", "GET", getContactTests, t)
 
 }

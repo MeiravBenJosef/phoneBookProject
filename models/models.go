@@ -7,3 +7,7 @@ type Contact struct {
 	Address string `json:"address,omitempty" validate:"excludesall=!@#?*/$&<>" bson:"address, omitempty"`
 	FullName string `json:"-" bson:"full_name, omitempty"`
 }
+
+type SearchTerm struct {
+	SearchTerm string `json:"searchTerm,omitempty" validate:"required,excludesall=!@#?*/$&<>" bson:"searchTerm, omitempty"`
+}

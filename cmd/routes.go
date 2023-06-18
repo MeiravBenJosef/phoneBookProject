@@ -14,8 +14,11 @@ var contactCollection *mongo.Collection = configs.GetCollection(configs.DB, "con
 //This function will navigate requests to the currect function 
 func setupRoutes(app *fiber.App){
 	app.Post("/contact", handlers.CreateContact)
-	app.Get("/getContact", handlers.GetAContact)
+	app.Get("/searchContact", handlers.SearchAContact)
 	app.Put("/editContact", handlers.EditAContact) 
 	app.Delete("/deleteContact", handlers.DeleteAContact)
 	app.Get("/contacts/:page", handlers.GetContacts)
+	//bonus
+	app.Get("/getByTermOrPhrase", handlers.GetContactsByTermOrPhrase)
+
 }
