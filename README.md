@@ -238,6 +238,78 @@ JSON<br />
         "data": "Contact wasn't found!"
     }
 }`
+
+___
+**Delete contact**
+___
+  Delete a contact in phone book, by it's full name.
+
+* **URL**
+
+  /deleteContact
+
+* **Method:**
+
+  `DELETE`
   
+*  **URL Params**
+
+   None
+
+* **Body**<br />
+JSON<br />
+`{
+   "name": "first name",
+   "lastName":"last name"
+}`<br />
+**Required:**<br />
+  `"name":"string"` AND `"lastName":"string"`
+**Required:**<br />
+  * First and last name are required to delete new contact
+  * The following characters are not allowed for any property: !@#?*/$&<>
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "status": 200,
+    "message": "success",
+    "data": {
+        "data": "Contact successfully deleted!"
+    }
+}`
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{
+    "status": 400,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+
+  OR
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{
+    "status": 500,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+
+  OR
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{
+    "status": 404,
+    "message": "error",
+    "data": {
+        "data": "Contact wasn't found!"
+    }
+}`
 
 
