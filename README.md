@@ -26,46 +26,61 @@ ___
 
 * **URL**
 
-  /users/:id
+  /contact"
 
 * **Method:**
 
-  `GET`
+  `POST`
   
 *  **URL Params**
 
-   **Required:**
- 
-   `id=[integer]`
+   None
 
-* **Data Params**
-
-  None
+* **Body**<br />
+JSON<br />
+`{
+   "name": "first name",
+   "lastName":"last name",
+   "phone": "phone",
+   "address": "address"
+}`<br />
+**Required:**<br />
+  `"name":"string"` AND `"lastName":"string"`
+**Required:**<br />
+  * First and last name are required to create new contact
+  * The following characters are not allowed for any property: !@#?*/$&<>
 
 * **Success Response:**
 
-  * **Code:** 200 <br />
-    **Content:** `{ id : 12, name : "Michael Bloom" }`
+  * **Code:** 201 <br />
+    **Content:** `{
+    "status": 201,
+    "message": "success",
+    "data": {
+        "InsertedID": "ID"
+    }
+}`
  
 * **Error Response:**
 
-  * **Code:** 404 NOT FOUND <br />
-    **Content:** `{ error : "User doesn't exist" }`
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{
+    "status": 400,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
 
   OR
 
-  * **Code:** 401 UNAUTHORIZED <br />
-    **Content:** `{ error : "You are unauthorized to make this request." }`
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{
+    "status": 500,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
 
-* **Sample Call:**
 
-  ```javascript
-    $.ajax({
-      url: "/users/1",
-      dataType: "json",
-      type : "GET",
-      success : function(r) {
-        console.log(r);
-      }
-    });
-  ```
