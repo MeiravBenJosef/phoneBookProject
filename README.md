@@ -26,7 +26,7 @@ ___
 
 * **URL**
 
-  /contact"
+  /contact
 
 * **Method:**
 
@@ -82,5 +82,79 @@ JSON<br />
         "data": "error message"
     }
 }`
+
+___
+**Search contact**
+___
+  Search a contact in phone book, by full name.
+
+* **URL**
+
+  /searchContact
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   None
+
+* **Body**<br />
+JSON<br />
+`{
+   "name": "first name",
+   "lastName":"last name"
+}`<br />
+**Required:**<br />
+  `"name":"string"` AND `"lastName":"string"`
+**Required:**<br />
+  * First and last name are required to create new contact
+  * The following characters are not allowed for any property: !@#?*/$&<>
+
+* **Success Response:**
+
+  * **Code:** 201 <br />
+    **Content:** `{
+    "status": 201,
+    "message": "success",
+    "data": {
+        "InsertedID": "ID"
+    }
+}`
+ 
+* **Error Response:**
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{
+    "status": 400,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+
+  OR
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{
+    "status": 500,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+
+  OR
+
+  * **Code:** 404 NOT FOUND <br />
+    **Content:** `{
+    "status": 404,
+    "message": "error",
+    "data": {
+        "data": "Contact wasn't found!"
+    }
+}`
+  
 
 
