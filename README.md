@@ -355,5 +355,66 @@ ___
     }
 }`
 
+___
+**Get contacts with a certain term/phrase in their name**
+___
+  Get all contacts in phone book with a certain term/phrase in their full name.
+  A term is a sequence of characters that excludes whitespace characters
+  A phrase is a sequence of terms with any number of whitespace characters.
+
+* **URL**
+
+  /getByTermOrPhrase
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   None
+
+* **Body**<br />
+JSON<br />
+`{
+   "searchTerm": "term/phrase"
+}`<br />
+**Required:**<br />
+  `"searchTerm":"string"`
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "status": 200,
+    "message": "success",
+    "data": {[{
+        "name": "first name",
+        "lastName":"last name",
+        "phone":"phone",
+        "address":"address"
+    }]}
+}`
+ 
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{
+    "status": 500,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+OR
+
+  * **Code:** 400 BAD REQUEST <br />
+    **Content:** `{
+    "status": 400,
+    "message": "error",
+    "data": {
+        "data": "Contact wasn't found!"
+    }
+}`
 
 
