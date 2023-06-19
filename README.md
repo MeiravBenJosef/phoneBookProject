@@ -312,4 +312,48 @@ JSON<br />
     }
 }`
 
+___
+**Get contacts- with pagination feature and limit of 10**
+___
+  Get all contacts in phone book, from a certain page, which is an input.
+
+* **URL**
+
+  /contacts/:page
+
+* **Method:**
+
+  `GET`
+  
+*  **URL Params**
+
+   None
+
+
+* **Success Response:**
+
+  * **Code:** 200 <br />
+    **Content:** `{
+    "status": 200,
+    "message": "success",
+    "data": {[{
+        "name": "first name",
+        "lastName":"last name",
+        "phone":"phone",
+        "address":"address"
+    }]}
+}`
+ 
+* **Error Response:**
+
+  * **Code:** 500 INTERNAL SERVER ERROR <br />
+    **Content:** `{
+    "status": 500,
+    "message": "error",
+    "data": {
+        "data": "error message"
+    }
+}`
+
+
 
