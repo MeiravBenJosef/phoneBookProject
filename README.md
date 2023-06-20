@@ -409,7 +409,8 @@ JSON<br />
         "data": "error message"
     }
 }`
-OR
+
+  OR
 
   * **Code:** 400 BAD REQUEST <br />
     **Content:** `{
