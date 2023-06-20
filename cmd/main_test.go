@@ -38,7 +38,11 @@ const (
 	NotFoundContactFirstName string = "Notfoundfirst"
 	NotFoundContactLastName string = "NotfoundLast"
 	NotValidFirstName string = "Not Valid <?"
-
+	TooLongsFirstName string = "To long first name with more than 30 characters"
+	TooLongPhone string = "To long phone name with more than 30 characters"
+	ValidTerm string = "mia"
+	ValidPhrase string = validNewContactFirstName + " " + validNewContactLastName
+	SearchInputsListName string = ""
 )
 
 //contact request inputs, used for create test
@@ -75,6 +79,15 @@ var contactTestInputs = []models.Contact{
 		FirstName: NotValidFirstName,
 		LastName: NoPhoneNewContactLastName,
 	},
+	{
+		FirstName: TooLongsFirstName,
+		LastName: NoPhoneNewContactLastName,
+	},
+	{
+		FirstName: "Fail create",
+		LastName: validNewContactLastName,
+		Phone: TooLongPhone,
+	},
 	
 }
 
@@ -83,7 +96,7 @@ var searchContactTestInputs = []models.Contact{
 	{
 		FirstName: validNewContactFirstName,
 		LastName: validNewContactLastName,
-		Phone: "0542022898",
+		Phone: "0542022899",
 		Address: "marcus 13, jerusalem",
 	},
 	{
@@ -108,8 +121,28 @@ var searchContactTestInputs = []models.Contact{
 		FirstName: NoPhoneNewContactFirstName,
 		LastName: NoPhoneNewContactLastName,
 	},
+	{
+		FirstName: TooLongsFirstName,
+		LastName: NoPhoneNewContactLastName,
+	},
+	{
+		FirstName: "Fail create",
+		LastName: validNewContactLastName,
+		Phone: TooLongPhone,
+	},
 	
 	
+}
+
+var getContactsWithTermOrPhraseInput = []models.SearchTerm{
+	{
+		SearchTerm: ValidTerm,
+	},
+	{
+		SearchTerm: ValidPhrase,
+	},
+	{
+	},
 }
 
 
@@ -127,11 +160,11 @@ func TestMain(m *testing.M) {
 
 
 //createResultContactResponse will return ContactResponse that contains contact details result
-func createResultContactResponse(inputs []models.Contact, inputidx int, status int, msg string) responses.ContactResponse{
+func createResultContactResponse[T any](input T, status int, msg string) responses.ContactResponse{
 	return responses.ContactResponse{
 		Status: status,
 		Message: msg,
-		Data: &fiber.Map{"data": inputs[inputidx]},
+		Data: &fiber.Map{"data": input},
 	}
 }
 
@@ -145,7 +178,7 @@ func createErrorContactResponse(datamsg string, status int, msg string) response
 }
 
 //helperRunner will execute all test cases of all tests, and run validations on the result
-func helperRunner(endpoint string, requesttype string, tests []Test, inputs []models.Contact, t *testing.T){
+func helperRunner[T any](endpoint string, requesttype string, tests []Test, inputs []T, t *testing.T){
 
 	for i, test := range tests {
 		// Create a new http request with the route
@@ -250,6 +283,18 @@ func TestCreateContact(t *testing.T) {
 			checkBody: false,
 
 		},
+		{
+			description:  "Create contact- First name is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
+		{
+			description: "Create contact- Phone is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
 	}
 	
 
@@ -258,52 +303,6 @@ func TestCreateContact(t *testing.T) {
 	
 }
 
-
-//TestSearchContact will build all relevant test cases for contact searching flow and run the tests.
-func TestSearchContact(t *testing.T) {
-	
-	var searchContactTests =[]Test{
-		{
-			description: "Search contact- 201",
-			expectedCode: 200,
-			expectedBody: createResultContactResponse(searchContactTestInputs, 0, 200, "success"),
-			checkBody: true,
-		},
-		{
-			description: "Search not existed contact- 404",
-			expectedCode: 404,
-			expectedBody: createErrorContactResponse(responses.ContactNotFound, 404, "error"),
-			checkBody: true,
-
-		},
-		{
-			description: "Search contact- missing first name property",
-			expectedCode: 400,
-			checkBody: false,
-
-		},
-		{
-			description: "Search contact- missing last name property",
-			expectedCode: 400,
-			checkBody: false,
-
-		},
-		{
-			description:  "Search contact- missing phone and address",
-			expectedCode: 200,
-			expectedBody: createResultContactResponse(searchContactTestInputs, 4, 200, "success"),
-			checkBody: true,
-
-		},
-	}
-
-
-	helperRunner("/searchContact", "GET", searchContactTests, searchContactTestInputs, t)
-
-	
-}
-
-
 //TestEditContact will build all relevant test cases for contact editing flow and run the tests.
 func TestEditContact(t *testing.T) {
 
@@ -311,7 +310,7 @@ func TestEditContact(t *testing.T) {
 		{
 			description: "Edit contact- 200",
 			expectedCode: 200,
-			expectedBody: createResultContactResponse(searchContactTestInputs, 0, 200, "success"),
+			expectedBody: createResultContactResponse(searchContactTestInputs[0], 200, "success"),
 			checkBody: true,
 
 		},
@@ -338,6 +337,18 @@ func TestEditContact(t *testing.T) {
 			expectedBody: createErrorContactResponse(responses.NoUpdatedFields, 400, "error"),
 			checkBody: true,
 		},
+		{
+			description:  "Edit contact- First name is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
+		{
+			description: "Edit contact- Phone is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
 	}
 
 
@@ -345,6 +356,91 @@ func TestEditContact(t *testing.T) {
 
 	
 }
+
+
+//TestSearchContact will build all relevant test cases for contact searching flow and run the tests.
+func TestSearchContact(t *testing.T) {
+	
+	var searchContactTests =[]Test{
+		{
+			description: "Search contact- 201",
+			expectedCode: 200,
+			expectedBody: createResultContactResponse(searchContactTestInputs[0], 200, "success"),
+			checkBody: true,
+		},
+		{
+			description: "Search not existed contact- 404",
+			expectedCode: 404,
+			expectedBody: createErrorContactResponse(responses.ContactNotFound, 404, "error"),
+			checkBody: true,
+
+		},
+		{
+			description: "Search contact- missing first name property",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
+		{
+			description: "Search contact- missing last name property",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
+		{
+			description:  "Search contact- missing phone and address",
+			expectedCode: 200,
+			expectedBody: createResultContactResponse(searchContactTestInputs[4], 200, "success"),
+			checkBody: true,
+
+		},
+		{
+			description:  "Search contact- First name is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
+	}
+
+
+	helperRunner("/searchContact", "GET", searchContactTests, searchContactTestInputs, t)
+
+	
+}
+
+//TestGetContacts will build all relevant test cases for get contacts flow and run the tests.
+func TestGetContactsWithTermOrPhrase(t *testing.T) {
+	
+	var getContactTests =[]Test{
+		{
+			description: "Get contacts with term- 200",
+			expectedCode: 200,
+			expectedBody: createResultContactResponse([]models.Contact{searchContactTestInputs[0]}, 200, "success"),
+			checkBody: true,
+			param: "1",
+		},
+		{
+			description: "Get contacts with phrase- 200",
+			expectedCode: 200,
+			expectedBody: createResultContactResponse([]models.Contact{searchContactTestInputs[0],searchContactTestInputs[4]}, 200, "success"),
+			checkBody: true,
+			param: "something",
+
+		},
+		{
+			description: "Get contacts- missing term/phrase 400",
+			expectedCode: 400,
+			checkBody: false,
+			param: "something",
+
+		},
+	}
+
+	helperRunner("/getByTermOrPhrase", "GET", getContactTests, getContactsWithTermOrPhraseInput, t)
+
+}
+
+
 
 
 //TestDeleteContact will build all relevant test cases for contact deleting flow and run the tests.
@@ -377,6 +473,12 @@ func TestDeleteContact(t *testing.T) {
 			expectedCode: 200,
 			checkBody: false,
 		},
+		{
+			description:  "Delete contact- First name is too long",
+			expectedCode: 400,
+			checkBody: false,
+
+		},
 	}
 
 	helperRunner("/deleteContact", "DELETE", deleteContactTests, searchContactTestInputs, t)
@@ -405,3 +507,4 @@ func TestGetContacts(t *testing.T) {
 	helperRequestRunnerWithoutBody("/contacts/", "GET", getContactTests, t)
 
 }
+
