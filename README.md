@@ -4,17 +4,17 @@
 
   * Clone the project to a local folder on your machine.
   * Inside .env file, for MONGOURI env variable, put the mongo db connection string provided to you.
-  * Make sure to have docker desktop installed and running. Can be downloaded here: https://www.docker.com/products/docker-desktop/
-  * Open a new terminal inside the project and run the following: docker compose up
-  * A new docker container should be created and app should run at http://127.0.0.1:3000 
+  * Make sure to have docker desktop installed and running. It can be downloaded here: https://www.docker.com/products/docker-desktop/
+  * Open a new terminal inside the project and run the following: `docker compose up`
+  * A new docker image and container should be created and app should run at http://127.0.0.1:3000 
   * In order to send requests to the app, please use your favourite API client, i used Postman desktop: https://www.postman.com/downloads/
   
 **Running project's tests**
 
   * Open a new terminal inside the project.
-  * run the following: docker compose run --service-ports web bash
-  * Go inside cmd folder: cd cmd/
-  * Run the following: go test -v
+  * run the following: `docker compose run --service-ports web bash`
+  * Go inside cmd folder: `cd cmd/`
+  * Run the following: `go test -v`
 
 
 ----
@@ -86,7 +86,7 @@ JSON<br />
 ___
 **Search contact**
 ___
-  Search a contact in phone book, by full name.
+  Search a contact in the phone book, by it's full name.
 
 * **URL**
 
@@ -109,7 +109,7 @@ JSON<br />
 **Required:**<br />
   `"name":"string"` AND `"lastName":"string"`
 **Required:**<br />
-  * First and last name are required to create new contact
+  * First and last name are required to search new contact
   * The following characters are not allowed for any property: !@#?*/$&<>
 
 * **Success Response:**
@@ -162,7 +162,7 @@ JSON<br />
 ___
 **Edit contact**
 ___
-  Edit phone/address of a contact in phone book, by it's full name.
+  Edit phone/address of a contact in the phone book, by it's full name.
 
 * **URL**
 
@@ -242,7 +242,7 @@ JSON<br />
 ___
 **Delete contact**
 ___
-  Delete a contact in phone book, by it's full name.
+  Delete a contact from the phone book, by it's full name.
 
 * **URL**
 
@@ -265,7 +265,7 @@ JSON<br />
 **Required:**<br />
   `"name":"string"` AND `"lastName":"string"`
 **Required:**<br />
-  * First and last name are required to delete new contact
+  * First and last name are required to delete a contact
   * The following characters are not allowed for any property: !@#?*/$&<>
 
 * **Success Response:**
@@ -354,6 +354,9 @@ ___
         "data": "error message"
     }
 }`
+
+ * **Required:**<br />
+   * The page number is required in the URL and is integer.
 
 ___
 **Get contacts with a certain term/phrase in their name**
